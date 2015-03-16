@@ -1,0 +1,119 @@
+/**
+ *	Comando SQL para adicionar TRIGGERS na base de dados.
+ *	OBS: As triggers abaixo servem para adicionar e deletar itens da tabela feed.
+ *
+ * 
+ */
+
+
+
+delimiter |
+
+CREATE TRIGGER feed_musica_add AFTER INSERT ON musica
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_musica , tipo_feed = 0, id_usuario_feed = NEW.id_artista_musica;
+  END;
+|
+
+CREATE TRIGGER feed_evento_add AFTER INSERT ON evento
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_evento , tipo_feed = 1, id_usuario_feed = NEW.id_contratante_evento;
+  END;
+|
+
+CREATE TRIGGER feed_playlist_add AFTER INSERT ON playlist
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_playlist , tipo_feed = 2, id_usuario_feed = NEW.id_usuario_playlist;
+  END;
+|
+
+CREATE TRIGGER feed_recado_add AFTER INSERT ON recado
+  FOR EACH ROW BEGIN
+    IF(NEW.tipo_recado != 3) THEN
+    INSERT INTO feed SET id_item_feed = NEW.id_recado , tipo_feed = 31, id_usuario_feed = NEW.id_criador_recado, subtipo_feed = NEW.tipo_recado;
+    END IF;
+  END;
+|
+
+CREATE TRIGGER feed_meventos_add AFTER INSERT ON membros_evento
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_evento_membros_evento , tipo_feed = 4, id_usuario_feed = NEW.id_usuario_membros_evento;
+  END;
+|
+
+CREATE TRIGGER feed_curriculum_add AFTER INSERT ON curriculum
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_curriculum , tipo_feed = 5, id_usuario_feed = NEW.id_artista_curriculum;
+  END;
+|
+
+CREATE TRIGGER feed_curriculum_update AFTER UPDATE ON curriculum
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_curriculum , tipo_feed = 6, id_usuario_feed = NEW.id_artista_curriculum;
+  END;
+|
+
+CREATE TRIGGER feed_avaliacao_add AFTER INSERT ON avaliacao
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_musica_avaliacao , tipo_feed = 7, id_usuario_feed = NEW.id_usuario_avaliacao;
+  END;
+|
+
+CREATE TRIGGER feed_contato_update AFTER UPDATE ON contato
+  FOR EACH ROW BEGIN
+ 	IF(NEW.status_contato = 0 && NEW.status_contato != OLD.status_contato) THEN
+	     INSERT INTO feed SET id_item_feed = NEW.id_contato , tipo_feed = 8, id_usuario_feed = NEW.id_receptor_contato, subtipo_feed = 1;
+	     INSERT INTO feed SET id_item_feed = NEW.id_contato , tipo_feed = 8, id_usuario_feed = NEW.id_remetente_contato, subtipo_feed = 2;
+	END IF;
+  END;
+|
+
+CREATE TRIGGER feed_acompanha_add AFTER INSERT ON acompanhar
+  FOR EACH ROW BEGIN
+    INSERT INTO feed SET id_item_feed = NEW.id_acompanhado_acompanhar, id_usuario_feed = NEW.id_usuario_acompanhar, tipo_feed = 9;
+  END;
+|
+
+CREATE TRIGGER feed_musica_delete AFTER DELETE ON musica
+  FOR EACH ROW BEGIN
+    DELETE FROM feed WHERE id_item_feed = OLD.id_musica AND (tipo_feed = 0 OR tipo_feed = 7);
+  END;
+|
+
+CREATE TRIGGER feed_evento_delete AFTER DELETE ON evento
+  FOR EACH ROW BEGIN
+    DELETE FROM feed WHERE id_item_feed = OLD.id_evento AND (tipo_feed = 1 OR tipo_feed = 4);
+  END;
+|
+
+CREATE TRIGGER feed_playlist_delete AFTER DELETE ON playlist
+  FOR EACH ROW BEGIN
+    DELETE FROM feed WHERE id_item_feed = OLD.id_playlist AND tipo_feed = 2;
+  END;
+|
+
+CREATE TRIGGER feed_recado_delete AFTER DELETE ON recado
+  FOR EACH ROW BEGIN
+    DELETE FROM feed WHERE id_item_feed = OLD.id_recado AND (tipo_feed = 31 OR tipo_feed = 32);
+  END;
+|
+    
+
+delimiter ;
+
+
+// Código para deletar os TRIGGERS
+
+DROP TRIGGER accordi.feed_avaliacao_add;
+DROP TRIGGER accordi.feed_contato_update;
+DROP TRIGGER accordi.feed_curriculum_add;
+DROP TRIGGER accordi.feed_curriculum_update;
+DROP TRIGGER accordi.feed_evento_add;
+DROP TRIGGER accordi.feed_evento_delete;
+DROP TRIGGER accordi.feed_meventos_add;
+DROP TRIGGER accordi.feed_musica_add;
+DROP TRIGGER accordi.feed_musica_delete;
+DROP TRIGGER accordi.feed_playlist_add;
+DROP TRIGGER accordi.feed_playlist_delete;
+DROP TRIGGER accordi.feed_recado_add;
+DROP TRIGGER accordi.feed_recado_delete;

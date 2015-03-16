@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteRule ^(.*)$ /accordi/404
+RewriteRule .(mp3)$ /accordi/404
+Options -Indexes
+ErrorDocument 404 /accordi/404 
