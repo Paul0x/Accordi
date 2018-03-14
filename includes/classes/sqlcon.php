@@ -47,12 +47,11 @@ class conn
       {
           try
           {
-              $this->pdo = new PDO("mysql:host=localhost;dbname=mydb;charset=utf8", "awk_katan", "123456"); // Driver de conexão.
+              $this->pdo = new PDO("mysql:host=localhost;dbname=mydb;charset=utf8", "usr", "123456"); // Driver de conexão.
           }
           catch(Exception $a)
           {
-              $this->pdo = new PDO("mysql:host=mysql01.accordi.com.br;dbname=accordi;charset=utf8", "accordi", "acc123"); // Driver de conexão. 
-          }
+               }
       $this->pdo->exec("SET NAMES utf8");
       $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Vamos trabalhar com tratamento de erros.
       }
